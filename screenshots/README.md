@@ -4,4 +4,4 @@ This folder contains screenshots of the NBA Draft Risk Calculator, including the
 
 ## Calculator Interface
 
-![NBA Draft Calculator Interface](screenshots/nba-draft-calculator-interface.jpg)
+screenshots/nba-draft-calculator-interface.jpg
