@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Value Zone Outcome Calculator</title>
+
+  <style>
+    :root {
+      --bg-1: #050b16;
+      --bg-2: #091325;
+      --text: #f8fafc;
+      --muted: #a8b3c7;
+      --muted-2: #7f8ba3;
+      --orange: #ff7a1a;
+      --orange-2: #ff9c4d;
+      --blue: #3b82f6;
+      --blue-2: #66a5ff;
+      --grey: #94a3b8;
+      --grey-2: #64748b;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12), transparent 20%),
+        radial-gradient(circle at 85% 80%, rgba(255, 122, 26, 0.12), transparent 20%),
+        linear-gradient(135deg, var(--bg-1) 0%, #08101f 35%, var(--bg-2) 100%);
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 85%);
+      opacity: 0.35;
+    }
+
+    .app-shell {
+      width: min(1440px, 96vw);
+      min-height: calc(100vh - 36px);
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(18, 28, 48, 0.78), rgba(8, 13, 25, 0.92));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 24px 28px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at top left, rgba(255, 122, 26, 0.08), transparent 20%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 18%);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .title-wrap {
+      max-width: 940px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      color: #cbd5e1;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), #ffb067);
+      box-shadow: 0 0 16px rgba(255, 122, 26, 0.45);
+    }
+
+    .main-title {
+      margin: 0 0 10px 0;
+      font-size: 54px;
+      line-height: 1.02;
+      letter-spacing: -1.6px;
+      font-weight: 900;
+      color: #f8fafc;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 860px;
+      font-size: 15px;
+      line-height: 1.45;
+      color: rgba(199, 208, 224, 0.85);
+    }
+
+    .header-chip {
+      align-self: flex-start;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #dbeafe;
+      background: linear-gradient(135deg, rgba(59,130,246,0.16), rgba(59,130,246,0.08));
+      border: 1px solid rgba(59,130,246,0.2);
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    .main {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.04fr 0.96fr;
+      gap: 18px;
+      min-height: 0;
+    }
+
+    .left-panel,
+    .right-panel {
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(6, 12, 24, 0.56), rgba(4, 10, 20, 0.78));
+      border: 1px solid rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+
+    .left-panel {
+      padding: 20px 22px 22px;
+    }
+
+    .right-panel {
+      padding: 20px 22px 22px;
+      position: relative;
+    }
+
+    .section-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .section-badge {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #dbeafe;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.14);
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e5ebf5;
+      letter-spacing: 0.01em;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 52px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(5,12,24,0.94), rgba(4,10,20,0.98));
+      color: var(--text);
+      font-size: 17px;
+      padding: 0 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    input[type="number"] {
+      appearance: auto;
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
+    }
+
+    select {
+      padding-right: 42px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #dbe3f3 50%),
+        linear-gradient(135deg, #dbe3f3 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) calc(50% - 3px),
+        calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    input:hover,
+    select:hover {
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(255,122,26,0.55);
+      box-shadow:
+        0 0 0 4px rgba(255,122,26,0.10),
+        0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    select:disabled {
+      opacity: 0.62;
+      cursor: not-allowed;
+    }
+
+    .warning {
+      min-height: 14px;
+      margin-top: 2px;
+      font-size: 12px;
+      color: #fca5a5;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      height: 50px;
+      border: none;
+      border-radius: 16px;
+      padding: 0 22px;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.14s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      color: white;
+      background: linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:
+        0 14px 30px rgba(255,122,26,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .secondary {
+      color: #ebf2ff;
+      background: linear-gradient(135deg, rgba(72, 88, 115, 0.95), rgba(58, 72, 98, 0.95));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .right-glow {
+      position: absolute;
+      right: -120px;
+      top: -100px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,122,26,0.13), transparent 65%);
+      pointer-events: none;
+      filter: blur(8px);
+    }
+
+    .results-title {
+      margin: 6px 0 26px 0;
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1px;
+      color: var(--orange);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      border-radius: 20px;
+      padding: 20px 20px;
+      min-height: 140px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric-card.neither {
+      border-color: rgba(148,163,184,0.15);
+    }
+
+    .metric-card.bust {
+      border-color: rgba(255,122,26,0.18);
+    }
+
+    .metric-card.steal {
+      border-color: rgba(59,130,246,0.18);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 50px;
+      line-height: 0.95;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: white;
+      margin-top: 6px;
+    }
+
+    .stack-area {
+      margin-bottom: 20px;
+    }
+
+    .stack-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .stack-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #e9eef9;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #d8e2f3;
+      font-weight: 700;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+    }
+
+    .legend-dot.neither { background: var(--grey); }
+    .legend-dot.bust { background: var(--orange); }
+    .legend-dot.steal { background: var(--blue); }
+
+    .stack-track {
+      width: 100%;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+    }
+
+    .stack-fill {
+      height: 100%;
+      transition: width 0.35s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .stack-fill.neither { background: linear-gradient(90deg, var(--grey-2), var(--grey)); }
+    .stack-fill.bust { background: linear-gradient(90deg, var(--orange), var(--orange-2)); }
+    .stack-fill.steal { background: linear-gradient(90deg, var(--blue), var(--blue-2)); }
+
+    .profile-card {
+      border-radius: 22px;
+      padding: 16px 18px 18px;
+      background:
+        linear-gradient(135deg, rgba(59,130,246,0.08), rgba(255,122,26,0.08)),
+        rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      margin-bottom: 14px;
+    }
+
+    .profile-eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      margin-bottom: 10px;
+    }
+
+    .profile-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+      color: white;
+    }
+
+    .profile-tag {
+      flex-shrink: 0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff7ed;
+      background: rgba(255,122,26,0.14);
+      border: 1px solid rgba(255,122,26,0.18);
+    }
+
+    .profile-note {
+      font-size: 14px;
+      line-height: 1.45;
+      color: #d8e2f3;
+      max-width: 94%;
+    }
+
+    .footer-note {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 95%;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 1220px) {
+      .main-title {
+        font-size: 44px;
+      }
+
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .app-shell {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 10px;
+      }
+
+      .app-shell {
+        padding: 18px 16px 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+      }
+
+      .main-title {
+        font-size: 34px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-main {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stack-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .metric-value {
+        font-size: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="title-wrap">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          Draft Analytics Decision Tool
+        </div>
+        <h1 class="main-title">Value Zone Outcome Calculator</h1>
+        <p class="subtitle">
+          Estimate draft outcome probabilities for non-lottery draft prospects using a multinomial model.
+        </p>
+      </div>
+
+      <div class="header-chip">Multinomial Model</div>
+    </div>
+
+    <div class="main">
+      <div class="left-panel">
+        <div class="section-top">
+          <div class="section-title">Player Inputs</div>
+        </div>
+
+        <div class="input-grid">
+          <div class="field">
+            <label for="pick">Draft Tier</label>
+            <div class="input-wrap">
+              <select id="pick">
+                <option value="3">Non-Lottery 1st</option>
+                <option value="4">Early 2nd</option>
+                <option value="5">Late 2nd</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="age">Age</label>
+            <div class="input-wrap">
+              <input id="age" type="number" step="0.1" min="18" max="25" value="20" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="position">Position</label>
+            <div class="input-wrap">
+              <select id="position">
+                <option value="1">PG</option>
+                <option value="2">SG</option>
+                <option value="3">SF</option>
+                <option value="4">PF</option>
+                <option value="5">C</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="intl">International</label>
+            <div class="input-wrap">
+              <select id="intl">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="height">Height (cm)</label>
+            <div class="input-wrap">
+              <input id="height" type="number" step="0.1" min="178" max="229" value="201" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="weight">Weight (lbs)</label>
+            <div class="input-wrap">
+              <input id="weight" type="number" step="0.1" min="160" max="300" value="215" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="shoots">Shoots</label>
+            <div class="input-wrap">
+              <select id="shoots">
+                <option value="0">Right</option>
+                <option value="1">Left</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="power">Power School</label>
+            <div class="input-wrap">
+              <select id="power">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="warning" id="powerWarning"></div>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="primary" onclick="calc()">Calculate</button>
+          <button class="secondary" onclick="generateProfile()">Generate Profile</button>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="right-glow"></div>
+
+        <div class="section-top">
+          <div class="section-title">Model Output</div>
+          <div class="section-badge">Live Evaluation</div>
+        </div>
+
+        <h2 class="results-title">Evaluation</h2>
+
+        <div class="metric-grid">
+          <div class="metric-card neither">
+            <div class="metric-label">Neither</div>
+            <div class="metric-value" id="neitherMetric">--</div>
+          </div>
+
+          <div class="metric-card bust">
+            <div class="metric-label">Bust</div>
+            <div class="metric-value" id="bustMetric">--</div>
+          </div>
+
+          <div class="metric-card steal">
+            <div class="metric-label">Steal</div>
+            <div class="metric-value" id="stealMetric">--</div>
+          </div>
+        </div>
+
+        <div class="stack-area">
+          <div class="stack-top">
+            <div class="stack-title">Outcome Mix</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot neither"></span>Neither</div>
+              <div class="legend-item"><span class="legend-dot bust"></span>Bust</div>
+              <div class="legend-item"><span class="legend-dot steal"></span>Steal</div>
+            </div>
+          </div>
+
+          <div class="stack-track">
+            <div class="stack-fill neither" id="neitherBar"></div>
+            <div class="stack-fill bust" id="bustBar"></div>
+            <div class="stack-fill steal" id="stealBar"></div>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-eyebrow">Model Summary</div>
+          <div class="profile-main">
+            <div class="profile-name" id="profileValue">Awaiting input</div>
+            <div class="profile-tag" id="profileTag">Outcome Signal</div>
+          </div>
+          <div class="profile-note" id="profileNote">
+            This multinomial model produces mutually exclusive class probabilities that sum to 100%.
+          </div>
+        </div>
+
+        <div class="footer-note" id="totalCheck">
+          Total Check: --
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function scaleValue(x, mean, scale) {
+      return (x - mean) / scale;
+    }
+
+    function softmax(logits) {
+      const maxLogit = Math.max(...logits);
+      const exps = logits.map(v => Math.exp(v - maxLogit));
+      const sumExp = exps.reduce((a, b) => a + b, 0);
+      return exps.map(v => v / sumExp);
+    }
+
+    function pct(x) {
+      return (x * 100).toFixed(1) + "%";
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randOneDecimal(min, max) {
+      return (Math.random() * (max - min) + min).toFixed(1);
+    }
+
+    function updatePowerSchoolState() {
+      const intl = document.getElementById("intl").value;
+      const power = document.getElementById("power");
+      const powerWarning = document.getElementById("powerWarning");
+
+      if (intl === "1") {
+        power.value = "0";
+        power.disabled = true;
+        powerWarning.textContent = "Power School is disabled for international players.";
+      } else {
+        power.disabled = false;
+        powerWarning.textContent = "";
+      }
+    }
+
+    const scalerMean = {
+      Age: 21.31382978723404,
+      Height_Cm: 200.88659574468085,
+      Weight_lbs: 219.42021276595744,
+      BMI: 54.237223385951964,
+      Position_x_Pick: 11.332978723404254
+    };
+
+    const scalerScale = {
+      Age: 1.3939154301272239,
+      Height_Cm: 9.016870187904104,
+      Weight_lbs: 27.846673966895228,
+      BMI: 4.562696494993906,
+      Position_x_Pick: 6.291735347294765
+    };
+
+    const intercepts = {
+      "0": -0.6209044879380949,
+      "1": 0.9746823124697477,
+      "2": -0.3537778245316594
+    };
+
+    const coefs = {
+      "0": {
+        "Age": 0.0508643713112754,
+        "Height_Cm": -0.25644470924818563,
+        "Weight_lbs": 0.3827114893917146,
+        "BMI": -0.3160895673137108,
+        "Position_x_Pick": -0.12479960840410388,
+        "PickBucketNUM_4.0": 0.8182955678205076,
+        "PickBucketNUM_5.0": 1.3552732908247396,
+        "Position_2.0": 0.0258771524475343,
+        "Position_3.0": 0.2598934008418384,
+        "Position_4.0": 0.5161212506859985,
+        "Position_5.0": 0.02242603019795231,
+        "International_1.0": -0.2668203901755226,
+        "Shoots_1.0": -0.2425502980471358,
+        "Power_School_1.0": 0.20470224912069673
+      },
+      "1": {
+        "Age": 0.05515746494786325,
+        "Height_Cm": 0.05500768009112694,
+        "Weight_lbs": -0.42090636374404433,
+        "BMI": 0.1001349840812261,
+        "Position_x_Pick": 0.9700026684889212,
+        "PickBucketNUM_4.0": -0.8539041024606002,
+        "PickBucketNUM_5.0": -1.6324912683318706,
+        "Position_2.0": -0.05253198777534212,
+        "Position_3.0": -0.5278861855831743,
+        "Position_4.0": -0.9208148284500569,
+        "Position_5.0": -0.37806540632085256,
+        "International_1.0": 0.24404060552556706,
+        "Shoots_1.0": -0.015567664844402241,
+        "Power_School_1.0": -0.3867455914307923
+      },
+      "2": {
+        "Age": -0.10602183625914136,
+        "Height_Cm": 0.20143702915705616,
+        "Weight_lbs": 0.03819487435232936,
+        "BMI": 0.21595458323248165,
+        "Position_x_Pick": -0.8452030600848216,
+        "PickBucketNUM_4.0": 0.035608534640090304,
+        "PickBucketNUM_5.0": 0.2772179775071234,
+        "Position_2.0": 0.02665483532780578,
+        "Position_3.0": 0.2679927847413367,
+        "Position_4.0": 0.4046935777640581,
+        "Position_5.0": 0.35563937612289676,
+        "International_1.0": 0.02277978464995545,
+        "Shoots_1.0": 0.25811796289153793,
+        "Power_School_1.0": 0.18204334231009472
+      }
+    };
+
+    function calc() {
+      const age = parseFloat(document.getElementById("age").value);
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const pick = parseInt(document.getElementById("pick").value);
+      const pos = parseInt(document.getElementById("position").value);
+      const intl = parseInt(document.getElementById("intl").value);
+      const shoots = parseInt(document.getElementById("shoots").value);
+      const power = parseInt(document.getElementById("power").value);
+
+      const bmi = weight / ((height / 100) ** 2);
+      const positionXPick = pos * pick;
+
+      const features = {
+        "Age": scaleValue(age, scalerMean.Age, scalerScale.Age),
+        "Height_Cm": scaleValue(height, scalerMean.Height_Cm, scalerScale.Height_Cm),
+        "Weight_lbs": scaleValue(weight, scalerMean.Weight_lbs, scalerScale.Weight_lbs),
+        "BMI": scaleValue(bmi, scalerMean.BMI, scalerScale.BMI),
+        "Position_x_Pick": scaleValue(positionXPick, scalerMean.Position_x_Pick, scalerScale.Position_x_Pick),
+        "PickBucketNUM_4.0": pick === 4 ? 1 : 0,
+        "PickBucketNUM_5.0": pick === 5 ? 1 : 0,
+        "Position_2.0": pos === 2 ? 1 : 0,
+        "Position_3.0": pos === 3 ? 1 : 0,
+        "Position_4.0": pos === 4 ? 1 : 0,
+        "Position_5.0": pos === 5 ? 1 : 0,
+        "International_1.0": intl === 1 ? 1 : 0,
+        "Shoots_1.0": shoots === 1 ? 1 : 0,
+        "Power_School_1.0": power === 1 ? 1 : 0
+      };
+
+      const logits = ["0", "1", "2"].map(cls => {
+        let z = intercepts[cls];
+        for (const key in coefs[cls]) {
+          z += (features[key] || 0) * coefs[cls][key];
+        }
+        return z;
+      });
+
+      const probs = softmax(logits);
+      const neither = probs[0];
+      const bust = probs[1];
+      const steal = probs[2];
+      const total = neither + bust + steal;
+
+      document.getElementById("neitherMetric").textContent = pct(neither);
+      document.getElementById("bustMetric").textContent = pct(bust);
+      document.getElementById("stealMetric").textContent = pct(steal);
+
+      const neitherBar = document.getElementById("neitherBar");
+      const bustBar = document.getElementById("bustBar");
+      const stealBar = document.getElementById("stealBar");
+
+      neitherBar.style.width = `${neither * 100}%`;
+      bustBar.style.width = `${bust * 100}%`;
+      stealBar.style.width = `${steal * 100}%`;
+
+      neitherBar.textContent = neither > 0.12 ? pct(neither) : "";
+      bustBar.textContent = bust > 0.12 ? pct(bust) : "";
+      stealBar.textContent = steal > 0.12 ? pct(steal) : "";
+
+      let profileValue = "";
+      let profileTag = "";
+      let profileNote = "";
+
+      const maxProb = Math.max(neither, bust, steal);
+
+      if (maxProb === steal) {
+        profileValue = "Steal-Leaning Profile";
+        profileTag = "Upside Signal";
+        profileNote = "This prospect most strongly maps to the Steal class within the value zone.";
+      } else if (maxProb === bust) {
+        profileValue = "Bust-Leaning Profile";
+        profileTag = "Risk Signal";
+        profileNote = "This prospect most strongly maps to the Bust class, indicating elevated downside relative to peers.";
+      } else {
+        profileValue = "Neutral Outcome Profile";
+        profileTag = "Middle Band";
+        profileNote = "This prospect most strongly maps to the Neither class, suggesting a more moderate outcome expectation.";
+      }
+
+      document.getElementById("profileValue").textContent = profileValue;
+      document.getElementById("profileTag").textContent = profileTag;
+      document.getElementById("profileNote").textContent = profileNote;
+
+      document.getElementById("totalCheck").textContent =
+        `Total Check: ${(total * 100).toFixed(1)}%`;
+    }
+
+    function generateProfile() {
+      const pick = randInt(3, 5);
+      const age = randInt(18, 25);
+      const pos = randInt(1, 5);
+      const intl = randInt(0, 1);
+      const height = randOneDecimal(178, 229);
+      const weight = randInt(160, 300);
+      const shoots = randInt(0, 1);
+
+      let power = 0;
+      if (intl === 0) {
+        power = randInt(0, 1);
+      }
+
+      document.getElementById("pick").value = String(pick);
+      document.getElementById("age").value = String(age);
+      document.getElementById("position").value = String(pos);
+      document.getElementById("intl").value = String(intl);
+      document.getElementById("height").value = String(height);
+      document.getElementById("weight").value = String(weight);
+      document.getElementById("shoots").value = String(shoots);
+      document.getElementById("power").value = String(power);
+
+      updatePowerSchoolState();
+      calc();
+    }
+
+    document.getElementById("intl").addEventListener("change", function () {
+      updatePowerSchoolState();
+      calc();
+    });
+
+    updatePowerSchoolState();
+    calc();
+  </script>
+</body>
+</html>
