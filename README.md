@@ -55,10 +55,25 @@ The calculator estimates draft outcomes using historical pre-draft player charac
 
 ## Key Findings
 
-- Draft value declines after the lottery, but meaningful upside still exists outside the top selections.
-- Early second-round picks demonstrated stronger upside than late second-round picks.
-- **Shooting guards selected in the early second round showed the highest historical probability of becoming steals among second-round positions.**
-- Modeling draft outcomes as **Bust**, **Steal**, or **Neither** provided a more balanced framework for evaluating player risk than traditional binary classifications.
+### Draft Value by Tier
+
+![Average Career Value by Draft Tier](screenshots/avg-career-value-by-tier.png)
+
+- Average career value declined steadily across draft tiers, reinforcing the importance of draft position while highlighting opportunities to find value beyond the lottery.
+
+### Bust Rate by Draft Tier
+
+![Bust Rate by Draft Tier](screenshots/bust-rate-by-tier.png)
+
+- Bust rates increased considerably in later draft tiers, demonstrating the growing uncertainty associated with later draft selections.
+
+### Value vs. Risk Across Draft Tiers
+
+![Value vs. Risk Across Draft Tiers](screenshots/value-vs-risk-by-tier.png)
+
+- Early second-round selections demonstrated greater upside than late second-round selections, indicating that valuable talent can still be identified outside the first round.
+- Among second-round players, **shooting guards selected in the early second round showed the highest historical probability of becoming steals.**
+- Modeling player outcomes as **Bust**, **Steal**, or **Neither** provided a more informative decision-support framework than traditional binary classifications by allowing both risk and upside to be evaluated simultaneously.
 
 ## Technologies Used
 
@@ -78,7 +93,10 @@ The calculator estimates draft outcomes using historical pre-draft player charac
 ├── presentation/
 │   └── NBA_Draft_Risk_Calculator_Presentation.pdf
 └── screenshots/
-    └── nba-draft-calculator-interface.jpg
+    ├── avg-career-value-by-tier.png
+    ├── bust-rate-by-tier.png
+    ├── nba-draft-calculator-interface.jpg
+    └── value-vs-risk-by-tier.png
 ```
 
 ## Project Background
