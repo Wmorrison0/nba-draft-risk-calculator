@@ -6,6 +6,10 @@ NBA teams invest millions of dollars evaluating draft prospects, yet player outc
 
 ![NBA Draft Calculator Interface](screenshots/nba-draft-calculator-interface.jpg)
 
+## Try the Calculator!
+
+Download or clone this repository and open `index.html` in your web browser to interact with the NBA Draft Risk Calculator.
+
 ## Key Features
 
 - Analyzes more than 1,800 NBA draft selections from 1990–2020
@@ -71,10 +75,10 @@ The calculator estimates draft outcomes using historical pre-draft player charac
 .
 ├── README.md
 ├── index.html
-├── screenshots/
-│   └── nba-draft-calculator-interface.jpg
 ├── presentation/
-└── ...
+│   └── NBA_Draft_Risk_Calculator_Presentation.pdf
+└── screenshots/
+    └── nba-draft-calculator-interface.jpg
 ```
 
 ## Project Background
