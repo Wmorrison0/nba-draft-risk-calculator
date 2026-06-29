@@ -87,7 +87,7 @@ The calculator estimates draft outcomes using historical pre-draft player charac
 ## Repository Structure
 
 ```text
-.
+nba-draft-risk-calculator/
 ├── README.md
 ├── index.html
 ├── presentation/
@@ -95,8 +95,8 @@ The calculator estimates draft outcomes using historical pre-draft player charac
 └── screenshots/
     ├── avg-career-value-by-tier.png
     ├── bust-rate-by-tier.png
-    ├── nba-draft-calculator-interface.jpg
-    └── value-vs-risk-by-tier.png
+    ├── value-vs-risk-by-tier.png
+    └── nba-draft-calculator-interface.jpg
 ```
 
 ## Project Background
