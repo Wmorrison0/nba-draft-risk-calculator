@@ -77,11 +77,11 @@ The calculator estimates draft outcomes using historical pre-draft player charac
 
 ## Technologies Used
 
+- The web interface is implemented as a self-contained HTML application with embedded CSS and JavaScript for ease of distribution and demonstration.
 - Python
 - Pandas
 - NumPy
 - Statsmodels
-- HTML
 - Multinomial Logistic Regression
 
 ## Repository Structure
